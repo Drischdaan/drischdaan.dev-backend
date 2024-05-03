@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 
-type PingResponse = {
+export type PingResponse = {
   ping: 'pong';
 };
 

@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { IAppConfig } from './app.config';
@@ -15,6 +15,13 @@ async function bootstrap() {
     origin: [appConfig.frontendUrl],
   });
   logger.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
 
   await app.listen(appConfig.port);
   logger.log(`🚀 Application listening on port ${appConfig.port}`);
