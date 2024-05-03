@@ -1,8 +1,22 @@
+import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { IAppConfig } from './app.config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  const logger: Logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  const config: ConfigService = app.get<ConfigService>(ConfigService);
+  const appConfig: IAppConfig = config.get<IAppConfig>('app');
+
+  const allowedOrigins = [appConfig.frontendUrl];
+  app.enableCors({
+    origin: [appConfig.frontendUrl],
+  });
+  logger.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+
+  await app.listen(appConfig.port);
+  logger.log(`🚀 Application listening on port ${appConfig.port}`);
 }
 bootstrap();
